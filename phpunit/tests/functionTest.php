@@ -101,4 +101,43 @@ class CalculateTotalTest extends TestCase
             'The total should add up to $43.30'
         );
     }
+
+    public function testRemoveItemFromCart()
+    {
+        $cart = array(
+            array(
+                'sku' => 'abc123',
+                'price' => 10.05,
+                'quantity' => 1
+            ),
+            array(
+                'sku' => 'cde456',
+                'price' => 13.75,
+                'quantity' => 2
+            )
+        );
+
+        $item = array(
+            'sku' => 'abc123',
+            'price' => 10.05,
+            'quantity' => 1
+        );
+
+        $cartAfterRemoval = array(
+            array(
+                'sku' => 'cde456',
+                'price' => 13.75,
+                'quantity' => 2
+            )
+        );
+
+        $removeItem = new functions();
+
+        $output = $removeItem->removeItemFromCart($item, $cart);
+        $this->assertEquals(
+            $cartAfterRemoval,
+            $output,
+            'The items in the cart should match'
+        );
+    }
 }

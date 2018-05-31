@@ -2,7 +2,7 @@
 
 require_once 'bootstrap.php';
 
-//use src\functions as functions;
+use src\functions as functions;
 
 //$functions = new functions();
 //
@@ -31,23 +31,42 @@ require_once 'bootstrap.php';
 //var_dump(base64_encode(serialize($myProducts)));
 
 
-$test = new functions();
-$callGetProducts = $test->call('getProducts',[],10);
-var_dump($_SESSION['executionTimes']);
+//$test = new functions();
+//$callGetProducts = $test->call('getProducts',[],10);
+//var_dump($_SESSION['executionTimes']);
 
 
 
 
-//$itemToRemove = array(
-//    'sku' => 'cde456',
-//    'price' => 13.75,
-//    'quantity' => 1
-//);
-//
-//$cart->removeItemFromCart($itemToRemove);
-//
-//$updatedProductsInCart = $cart->getCart();
-//
-//var_dump($productsInCart);
-//echo '<hr />';
-//var_dump($updatedProductsInCart);
+$itemToRemove = array(
+    'sku' => 'abc123',
+    'price' => 10.05,
+    'quantity' => 1
+);
+
+$cartBeforeRemoval = array(
+    array(
+        'sku' => 'abc123',
+        'price' => 10.05,
+        'quantity' => 1
+    ),
+    array(
+        'sku' => 'cde456',
+        'price' => 13.75,
+        'quantity' => 2
+    )
+);
+
+$cartAfterRemoval = array(
+    array(
+        'sku' => 'cde456',
+        'price' => 13.75,
+        'quantity' => 2
+    )
+);
+$cart = new functions();
+$removeFromCart = $cart->removeItemFromCart($itemToRemove, $cartBeforeRemoval);
+
+var_dump($cartAfterRemoval);
+echo '<hr />';
+var_dump($removeFromCart);

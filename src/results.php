@@ -5,6 +5,7 @@ use src\functions as functions;
 
 class results
 {
+    const DOWNLOADFILEPATH = __DIR__ . '/../../tmp';
     protected $executionTimes = [];
     protected $itemToRemove = array(
         'sku' => 'abc123',
@@ -66,5 +67,64 @@ class results
 
             array_push($_SESSION['executionTimes'][$functionName]['time'], $execution_time);
         }
+    }
+
+    protected function getMean(array $times)
+    {
+        $count = count($times);
+        $sum = array_sum($times);
+        $total = $sum / $count;
+
+        return $total;
+    }
+
+    protected function getMedian(array $times)
+    {
+        rsort($times);
+        $middle = round(count($times), 2);
+        $total = $times[$middle-1];
+
+        return $total;
+    }
+
+    public function compare()
+    {
+        foreach($_SESSION['executionTimes'] as $method => $timesArray) {
+            $_SESSION['executionTimes'][$method]['comparators'] = [];
+            $_SESSION['executionTimes'][$method]['comparators']['min'] = min($timesArray['time']);
+            $_SESSION['executionTimes'][$method]['comparators']['max'] = max($timesArray['time']);
+            $_SESSION['executionTimes'][$method]['comparators']['mean'] = $this->getMean($timesArray['time']);
+            $_SESSION['executionTimes'][$method]['comparators']['median'] = $this->getMedian($timesArray['time']);
+        }
+    }
+
+    protected function exportCSV(string $fileName)
+    {
+        // write array to csv file
+        $output = fopen('tmp/' . $fileName,'w+');
+        header("Content-Type:application/csv");
+        header("Content-Disposition:attachment;filename=$fileName");
+
+        foreach($_SESSION['executionTimes'] as $method => $timesArray) {
+            fputcsv($output, array('Execution Times for ' . $method));
+            fputcsv($output, $timesArray['time']);
+            fputcsv($output, array('Min','Max','Mean','Median'));
+            fputcsv($output, $_SESSION['executionTimes'][$method]['comparators']);
+
+        }
+        fclose($output);
+    }
+
+    public function exportFile()
+    {
+        $basePathForDownload = 'tmp/';
+
+        $fileName = 'results.csv';
+        $this->exportCSV($fileName);
+
+        $result['pathForDownload'] = $basePathForDownload . $fileName;
+
+        header('Content-Type: application/json');
+        die(json_encode($result));
     }
 }

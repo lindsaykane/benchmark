@@ -62,14 +62,17 @@ class functions {
     }
 
     public function removeItemFromCart(array $item, array $cart) {
-        $keyToMatch = array_search($item['sku'], array_column($cart[0], 'sku'));
-
-        if($keyToMatch) {
-            if($item['quantity'] == $cart[$keyToMatch]['quantity']) {
-                array_splice($cart[0], $keyToMatch, 1);
-            } else {
-                $cart[0][$keyToMatch]['quantity'] = $item['quantity'];
+        foreach ($cart as $key => $cartitem) {
+            if($item['sku'] == $cartitem['sku']) {
+                if($item['quantity'] == $cartitem['quantity']) {
+                    array_splice($cart, $key, 1);
+                } else {
+                    $cartitem['quantity'] = $item['quantity'];
+                }
             }
         }
+
+
+        return $cart;
     }
 }

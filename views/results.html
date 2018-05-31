@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Benchmarker - Results</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+
+    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-6 offset-3 text-center">
+            <h1>Benchmarker</h1>
+            <h3>Results</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 offset-3 text-center">
+            <a style="color: #ffffff;" class="btn btn-lrg btn-primary" onclick="exportFile();">Export to CSV</a>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 50px;">
+        <div class="col-12">
+            <?php foreach($_SESSION['executionTimes'] as $method => $timesArray): ?>
+                <div class="row">
+                    <div class="col-6 offset-3" style="margin-top: 20px;">
+                        <h5 class="text-center" style="margin-bottom: 30px;"><?= $method; ?></h5>
+                        <table class="table table-striped table-bordered" style="width:100%" id="datatable_<?= array_search($method,array_keys($_SESSION['executionTimes'])); ?>">
+                            <thead style="font-weight: bold;">
+                            <tr>
+                                <th>Execution Times</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach($timesArray['time'] as $key => $time): ?>
+                            <tr>
+                                <td><?= $time; ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8 offset-2" style="margin-top: 20px;">
+                        <table class="table table-striped table-bordered">
+                            <thead style="font-weight: bold; color: #ff0000;">
+                                <tr>
+                                    <th>Min</th>
+                                    <th>Max</th>
+                                    <th>Mean</th>
+                                    <th>Median</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><?= $_SESSION['executionTimes'][$method]['comparators']['min']; ?></td>
+                                    <td><?= $_SESSION['executionTimes'][$method]['comparators']['max']; ?></td>
+                                    <td><?= $_SESSION['executionTimes'][$method]['comparators']['mean']; ?></td>
+                                    <td><?= $_SESSION['executionTimes'][$method]['comparators']['median']; ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php if(array_search($method,array_keys($_SESSION['executionTimes'])) < count($_SESSION['executionTimes'])): ?>
+                    <hr />
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function() {
+        $('table[id^="datatable_"]').each(function(){
+            var tableID = $(this).attr('id');
+            $('#' + tableID).DataTable();
+        })
+    });
+
+    function exportFile() {
+        $.ajax({
+            type: 'GET',
+            url: 'index.php',
+            data: {
+                'action': 'exportFile',
+            }
+        }).then(function (data) {
+            downloadFile(data['pathForDownload']);
+        }).fail(function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status);
+            console.log(thrownError);
+        });
+    }
+
+    function downloadFile(filepath) {
+        var link = document.createElement('a');
+        link.setAttribute('href', filepath);
+
+        link.click();
+    }
+</script>
