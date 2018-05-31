@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Benchmarker</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-6 offset-3 text-center">
+            <h1>Benchmarker</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 offset-3">
+            <form method="post" action="index.php">
+                <table class="table">
+                    <thead style="font-weight: bold;">
+                    <tr>
+                        <td class="text-right">Method</td>
+                        <td># Times to Run</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($callableMethods as $method): ?>
+                    <tr>
+                        <td class="text-right"><?= $method; ?></td>
+                        <td>
+                            <input name="numTimes_<?= $method; ?>" value="0" type="number">
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                    <tr>
+                        <td colspan="2" class="text-center"><button class="btn btn-large btn-success" type="submit">Submit</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
